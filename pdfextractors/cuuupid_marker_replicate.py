@@ -7,6 +7,7 @@ import requests
 import replicate
 import time
 import json
+import base64
 
 def verbose_print(message, verbose=False):
     """Print message if verbose mode is enabled."""
@@ -36,6 +37,11 @@ def generate_output_filename(input_file, output):
     else:
         return normalize_filename(input_file)
 
+def encode_file_to_base64(file_path):
+    """Encode the input file to base64."""
+    with open(file_path, "rb") as file:
+        return base64.b64encode(file.read()).decode('utf-8')
+
 def convert_pdf_to_markdown(input_file, output_file, verbose=False, force=False):
     """Convert PDF to Markdown using Replicate API."""
     verbose_print(f"Converting PDF to Markdown: {input_file}", verbose)
@@ -48,12 +54,18 @@ def convert_pdf_to_markdown(input_file, output_file, verbose=False, force=False)
         return
 
     try:
+        # Encode the input file to base64
+        encoded_file = encode_file_to_base64(input_file)
+
+        # Prepare the input for the API
+        api_input = {
+            "document": f"data:application/pdf;base64,{encoded_file}",
+            "parallel_factor": 10
+        }
+
         output = replicate.run(
             "cuuupid/marker:9c67051309f6d10ca139489f15fcb5ebc4866a3734af537c181fb13bc719d280",
-            input={
-                "document": input_file,
-                "parallel_factor": 10
-            }
+            input=api_input
         )
 
         if isinstance(output, dict) and 'markdown' in output:
