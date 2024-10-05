@@ -42,7 +42,7 @@ def encode_file_to_base64(file_path):
     with open(file_path, "rb") as file:
         return base64.b64encode(file.read()).decode('utf-8')
 
-def convert_pdf_to_markdown(input_file, output_file, verbose=False, force=False):
+def convert_pdf_to_markdown(input_file, output_file, verbose=False, force=False, dpi=400, lang="English", max_pages=None, enable_editor=False, parallel_factor=1):
     """Convert PDF to Markdown using Replicate API."""
     verbose_print(f"Converting PDF to Markdown: {input_file}", verbose)
 
@@ -60,8 +60,15 @@ def convert_pdf_to_markdown(input_file, output_file, verbose=False, force=False)
         # Prepare the input for the API
         api_input = {
             "document": f"data:application/pdf;base64,{encoded_file}",
-            "parallel_factor": 10
+            "dpi": dpi,
+            "lang": lang,
+            "parallel_factor": parallel_factor,
+            "enable_editor": enable_editor
         }
+
+        # Add max_pages if specified
+        if max_pages is not None:
+            api_input["max_pages"] = max_pages
 
         output = replicate.run(
             "cuuupid/marker:9c67051309f6d10ca139489f15fcb5ebc4866a3734af537c181fb13bc719d280",
@@ -93,10 +100,25 @@ def main():
     parser.add_argument("-o", "--output", help="Output filename")
     parser.add_argument("-v", "--verbose", action="store_true", help="Verbose mode")
     parser.add_argument("-f", "--force", action="store_true", help="Force overwrite existing files")
+    parser.add_argument("--dpi", type=int, default=400, help="The DPI to use for OCR (default: 400)")
+    parser.add_argument("--lang", choices=["English", "Spanish", "Portuguese", "French", "German", "Russian"], default="English", help="Language to use for OCR (default: English)")
+    parser.add_argument("--max-pages", type=int, help="Maximum number of pages to parse")
+    parser.add_argument("--enable-editor", action="store_true", help="Enable the editor model")
+    parser.add_argument("--parallel-factor", type=int, default=1, help="Parallel factor to use for OCR (default: 1)")
     args = parser.parse_args()
 
     check_api_token()
-    convert_pdf_to_markdown(args.input, args.output, args.verbose, args.force)
+    convert_pdf_to_markdown(
+        args.input,
+        args.output,
+        args.verbose,
+        args.force,
+        args.dpi,
+        args.lang,
+        args.max_pages,
+        args.enable_editor,
+        args.parallel_factor
+    )
 
 if __name__ == "__main__":
     main()
