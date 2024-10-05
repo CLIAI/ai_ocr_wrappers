@@ -1,0 +1,20 @@
+Plese fix `pdfextractors/cuuupid_marker_replicate.py`.
+
+Error:
+```
+$ cuuupid_marker_replicate.py ../testdata/v00/test_latex_page_with_table.pdf 
+[LOCAL_PATH_REMOVED]
+Error: ReplicateError Details:
+title: Input validation failed
+status: 422
+detail: - input.document: Does not match format 'uri'
+```
+
+To embed input file using base64 encoding into request json, like :
+`misc/code_samples/colorize_with_camenduru_colorize-line-art_replicate.com.sh`
+is doing.
+
+Other files may provide further guidance regarding model api:
+
+`docs/replicate.com/replicate.com_cuupid_markerapi.md`
+`docs/replicate.com/replicate.com_cuupid_markerschema.md`
