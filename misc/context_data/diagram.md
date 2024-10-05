@@ -1,0 +1,3 @@
+Prepare mermaid diagram basically that will appropriately illustrate the flow of the orchestrator that starts with like PDF file then uses multiple extractors to extract different kinds of outputs then uses AI LLMs to combine those outputs and some of the outputs may be images that require further machine learning and AI modules to extract even more textual information and then in the end we can have multiple artifacts generated which could be like combined but also the fragmentary in the process and some overall supervisor over this I'll provide below documentation of a project so you'll have more inspiration for a diagram
+
+## README.md
