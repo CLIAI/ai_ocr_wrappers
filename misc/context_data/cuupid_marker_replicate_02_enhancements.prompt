@@ -1,0 +1,6 @@
+Please add more flags to `pdfextractors/cuuupid_marker_replicate.py`
+to support addutional options specified in 
+
+`docs/replicate.com/replicate.com_cuupid_markerschema.md`
+
+. Assume default values from schema in case user does not provide them.
