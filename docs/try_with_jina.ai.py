@@ -17,17 +17,12 @@ def verbose_print(message, verbose):
 def get_domain(url):
     parsed = urllib.parse.urlparse(url)
     domain = parsed.netloc
-    parts = domain.split('.')
-    if len(parts) > 2:
-        return '.'.join(parts[-2:])
     return domain
 
 def get_topic(url):
     parsed = urllib.parse.urlparse(url)
     path = parsed.path.strip('/').split('/')
-    if len(path) > 1:
-        return path[-1].split('#')[0]
-    return 'index'
+    return '_'.join(path)
 
 def guess_filename(url):
     domain = get_domain(url)
