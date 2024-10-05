@@ -50,16 +50,17 @@ Therefore, let's keep
 
 * `pdfextractors/` directory
 
-Supported:
+Supported by orchestrator:
 
 * None yet
 
-To be supported:
+To be supported ( [x] means that extractor is implemented):
 
-* nougat - ML/AI OCR extractor specialised in Markdown+LaTeX formulas/tables
-* marker - specialised for FAST extraction of simpler PDF documents
-* `pdfimages` - images extractor
-* `pdftotext`, `pdftohtml`
+* [ ] nougat - ML/AI OCR extractor specialised in Markdown+LaTeX formulas/tables
+* [x] marker - specialised for FAST extraction of simpler PDF documents
+    * `cuuupid/marker` via replicate.com
+* [ ]  `pdfimages` - images extractor
+* [ ] `pdftotext`, `pdftohtml`
 
 
 ## Diagram
