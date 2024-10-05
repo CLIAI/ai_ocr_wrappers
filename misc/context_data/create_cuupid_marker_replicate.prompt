@@ -1,0 +1,20 @@
+Please implement `pdfextractors/cuuupid_marker_replicate.py` to be pdf2markdown
+converter.
+
+Given we use replicate.com API service,
+take inspiration from :
+`misc/code_samples/colorize_with_camenduru_colorize-line-art_replicate.com.sh`
+`misc/code_samples/replicate_com_flux_schnell.py`
+`misc/code_samples/replicate_com_flux_schnell.sh`
+
+keep style and functionalities they offer,
+especially idempotency, by making script first check if outputs
+exist and skip if outputs already exist and suceed,
+to allow running tool multiple times in pipeline,
+and having processing behind only once.
+
+Regarding API of model which we want to use, use information from:
+
+`docs/replicate.com/replicate.com_cuupid_marker.md`
+`docs/replicate.com/replicate.com_cuupid_markerapi.md`
+`docs/replicate.com/replicate.com_cuupid_markerschema.md`
