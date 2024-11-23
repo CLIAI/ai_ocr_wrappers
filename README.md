@@ -18,6 +18,10 @@ Utilized `pdftoimages in pipeline, combined with some vision models APIs
 (like GPT-4V or similar)
 for extracting information from images into text.
 
+Utilize models finetuned (or finetune on our own) that will correct
+broken OCR, like this model is finetuned for correcting OCR:
+<https://replicate.com/pbevan1/llama-3.1-8b-ocr-correction>
+
 ## Moonshot vision
 
 * Growing experience in PDF processing and collecting datasets
