@@ -1,0 +1,19 @@
+Please implement `pdfextractors/cudanexus_nougat_replicate.py` to be pdf2markdown
+converter.
+
+Given we use replicate.com API service,
+take inspiration from:
+`pdfextractors/cuuupid_marker_replicate.py`
+
+keep style and functionalities they offer,
+especially idempotency, by making script first check if outputs
+exist and skip if outputs already exist and suceed,
+to allow running tool multiple times in pipeline,
+and having processing behind only once.
+
+Regarding API of model which we want to use, use information from:
+
+`docs/replicate.com/replicate.com_cudanexus_nougat.md`
+`docs/replicate.com/replicate.com_cudanexus_nougat_api.md`
+`docs/replicate.com/replicate.com_cudanexus_nougat_api_schema.md`
+`docs/replicate.com/replicate.com_cudanexus_nougat_api_api-reference.md`

@@ -54,13 +54,18 @@ Supported by orchestrator:
 
 * None yet
 
-To be supported ( [x] means that extractor is implemented):
+Implemented extractors:
 
-* [ ] nougat - ML/AI OCR extractor specialised in Markdown+LaTeX formulas/tables
+* [x] nougat - ML/AI OCR extractor specialised in Markdown+LaTeX formulas/tables
+    * `cudanexus/nougat` via replicate.com
 * [x] marker - specialised for FAST extraction of simpler PDF documents
     * `cuuupid/marker` via replicate.com
-* [ ]  `pdfimages` - images extractor
-* [ ] `pdftotext`, `pdftohtml`
+
+To be implemented:
+
+* [ ] `pdfimages` - images extractor
+* [ ] `pdftotext` - basic text extraction
+* [ ] `pdftohtml` - HTML structure extraction
 
 
 ## Diagram
@@ -158,4 +163,13 @@ flowchart TB
     class Nougat,Marker,PDFToText,PDFToHTML,PDFImages extractor
     class VisionAI,ChartAnalyzer,TableExtractor,FormulaParser,LLMCombiner,Validator processor
     class StructuredText,ExtractedFormulas,ParsedTables,ChartDescriptions,ImageTranscriptions,CombinedOutput output
+```
+
+## TESTING
+
+To test extractors, by making REST calls to production services (may incurr costs),
+run:
+
+```
+./tests/integration_on_production/run_scripts_against_replicate.sh --with-rest
 ```

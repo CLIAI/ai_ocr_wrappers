@@ -5,8 +5,6 @@ import os
 import sys
 import requests
 import replicate
-import time
-import json
 import base64
 
 def verbose_print(message, verbose=False):
@@ -26,10 +24,6 @@ def normalize_filename(filename, max_length=64):
     normalized = ''.join(c.lower() if c.isalnum() else '_' for c in base)
     return normalized[:max_length]
 
-def check_existing_file(base_name):
-    """Check if a file with the given base name (markdown extension) exists."""
-    return os.path.exists(f"{base_name}.md")
-
 def generate_output_filename(input_filename, output_filename):
     """Generate output filename based on input file or output flag."""
     if output_filename:
@@ -42,7 +36,7 @@ def encode_file_to_base64(file_path):
     with open(file_path, "rb") as file:
         return base64.b64encode(file.read()).decode('utf-8')
 
-def convert_pdf_to_markdown(input_file, output_file, verbose=False, force=False, dpi=400, lang="English", max_pages=None, enable_editor=False, parallel_factor=1):
+def convert_pdf_to_markdown(input_file, output_file, verbose=False, force=False):
     """Convert PDF to Markdown using Replicate API."""
     verbose_print(f"Converting PDF to Markdown: {input_file}", verbose)
 
@@ -58,36 +52,24 @@ def convert_pdf_to_markdown(input_file, output_file, verbose=False, force=False,
 
         # Prepare the input for the API
         api_input = {
-            "document": f"data:application/pdf;base64,{encoded_file}",
-            "dpi": dpi,
-            "lang": lang,
-            "parallel_factor": parallel_factor,
-            "enable_editor": enable_editor
+            "pdf_file": f"data:application/pdf;base64,{encoded_file}"
         }
 
-        # Add max_pages if specified
-        if max_pages is not None:
-            api_input["max_pages"] = max_pages
-
         output = replicate.run(
-            "cuuupid/marker:9c67051309f6d10ca139489f15fcb5ebc4866a3734af537c181fb13bc719d280",
+            "cudanexus/nougat:d0b4e90da423598ff84debc9115bf891dd819843600ad842c0c178e3571f9e76",
             input=api_input
         )
 
-        if isinstance(output, dict) and 'markdown' in output:
-            markdown_url = output['markdown']
-            response = requests.get(markdown_url)
-            response.raise_for_status()
-            content = response.text
+        print("Error: Unexpected output format from the API.", file=sys.stderr)
+        response = requests.get(output)
+        response.raise_for_status()
+        content = response.text
 
-            with open(final_output_file, "w", encoding="utf-8") as f:
-                f.write(content)
-
-            verbose_print(f"Markdown saved as: {final_output_file}", verbose)
-            print(f"{final_output_file}")
-        else:
-            print("Error: Unexpected output format from the API.", file=sys.stderr)
-            sys.exit(1)
+        with open(final_output_file, "w", encoding="utf-8") as f:
+            f.write(content)
+        
+        verbose_print(f"Output saved as: {final_output_file}", verbose)
+        
 
     except Exception as e:
         print(f"Error: {str(e)}", file=sys.stderr)
@@ -99,11 +81,6 @@ def main():
     parser.add_argument("-o", "--output", help="Output filename")
     parser.add_argument("-v", "--verbose", action="store_true", help="Verbose mode")
     parser.add_argument("-f", "--force", action="store_true", help="Force overwrite existing files")
-    parser.add_argument("--dpi", type=int, default=400, help="The DPI to use for OCR (default: 400)")
-    parser.add_argument("--lang", choices=["English", "Spanish", "Portuguese", "French", "German", "Russian"], default="English", help="Language to use for OCR (default: English)")
-    parser.add_argument("--max-pages", type=int, help="Maximum number of pages to parse")
-    parser.add_argument("--enable-editor", action="store_true", help="Enable the editor model")
-    parser.add_argument("--parallel-factor", type=int, default=1, help="Parallel factor to use for OCR (default: 1)")
     args = parser.parse_args()
 
     check_api_token()
@@ -111,12 +88,7 @@ def main():
         args.input,
         args.output,
         args.verbose,
-        args.force,
-        args.dpi,
-        args.lang,
-        args.max_pages,
-        args.enable_editor,
-        args.parallel_factor
+        args.force
     )
 
 if __name__ == "__main__":
