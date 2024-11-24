@@ -100,7 +100,7 @@ def pdf_page_as_png_image_with_imagemagick(pdf_filename, page_no, tmp_png):
     """Convert PDF page to PNG using ImageMagick."""
     vprint(DEBUG, f"Trying ImageMagick for page {page_no}")
     try:
-        subprocess.run(['convert', f'{pdf_filename}[{page_no-1}]', tmp_png],
+        subprocess.run(['magick', f'{pdf_filename}[{page_no-1}]', tmp_png],
                       check=True)
         return True
     except subprocess.SubprocessError as e:
