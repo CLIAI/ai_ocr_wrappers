@@ -78,3 +78,13 @@ function human() { echo TO_HUMAN: "$@"; echo -e '\nAfter performing requested ac
 # human 'Review results and consider next steps.'
 #
 # # Commands to be executed:
+
+# Implement imgextractor/cudanexus_ocr_surya_replicate.py initial implementation
+
+# echo TODO > imgextractors/cudanexus_ocr_surya_replicate.py
+# aider --sonnet --edit-format whole  \
+# --file imgextractors/cudanexus_ocr_surya_replicate.py \
+# --msg 'Implement imgextractors/cudanexus_ocr_surya_replicate.py image2txt extractor based on provided documentation and examples' \
+# --read docs/replicate.com/replicate.com_cudanexus_ocr-surya_api_api-reference.md \
+# --read pdfextractors/cudanexus_nougat_replicate.py --read pdfextractors/cuuupid_marker_replicate.py
+

@@ -52,7 +52,9 @@ Therefore, let's keep
 
 ## Extractor Modules:
 
-* `pdfextractors/` directory
+* `pdfextractors/` directory with pdf OCR extractors
+* `imgextractors/` directory with image OCR extracors
+  * code sample `misc/code_samples/process_pdf_pages_one_by_one_as_image_example.py` can help in making code that will process pdf by extracting and processing page by page 
 
 Supported by orchestrator:
 
