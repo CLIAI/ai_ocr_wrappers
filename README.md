@@ -66,12 +66,20 @@ Implemented extractors:
     * `cudanexus/nougat` via replicate.com
 * [x] marker - specialised for FAST extraction of simpler PDF documents
     * `cuuupid/marker` via replicate.com
+* [x] cudanexus_ocr-surya - image OCR extractor
+    * `cudanexus/ocr-surya` via replicate.com
 
 To be implemented:
 
 * [ ] `pdfimages` - images extractor
 * [ ] `pdftotext` - basic text extraction
 * [ ] `pdftohtml` - HTML structure extraction
+* [ ] `abiruyt/text-extract-ocr` - text extraction from images
+* [ ] `vwtyler/ocr-pdf` - simple PDF to text using Tesseract
+
+## Integration with imgextractors
+
+We now support using `imgextractors` with PDFs by processing each page as an image. This is based on the example provided in `misc/code_samples/process_pdf_pages_one_by_one_as_image_example.py`.
 
 
 ## Diagram
