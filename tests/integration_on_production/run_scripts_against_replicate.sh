@@ -191,12 +191,12 @@ run_extractor_test() {
         case "$extractor" in
             cudanexus_nougat_replicate)
                 (set -x
-                pdfextractors/cudanexus_nougat_replicate.py --verbose -o "$outputfile" "$TESTPDF000"
+                python3 pdfextractors/cudanexus_nougat_replicate.py --verbose -o "$outputfile" "$TESTPDF000"
                 )
                 ;;
             cuuupid_marker_replicate)
                 (set -x
-                pdfextractors/cuuupid_marker_replicate.py --verbose -o "$outputfile" --lang English --dpi 400 --max-pages 1 --parallel-factor 4 "$TESTPDF000"
+                python3 pdfextractors/cuuupid_marker_replicate.py --verbose -o "$outputfile" --lang English --dpi 400 --max-pages 1 --parallel-factor 4 "$TESTPDF000"
                 )
                 ;;
             cudanexus_ocr_surya_replicate)
@@ -208,8 +208,8 @@ run_extractor_test() {
                 else
                     INFOEXTRACTOR TESTING "$extractor"
                     (set -x
-                    imgextractors/cudanexus_ocr_surya_replicate.py --verbose -o "$outputfile1" testdata/v00/test_latex_page_with_table-1.png
-                    imgextractors/cudanexus_ocr_surya_replicate.py --verbose -o "$outputfile2" testdata/v00/test_latex_page_with_table-2.png
+                    python3 imgextractors/cudanexus_ocr_surya_replicate.py --verbose -o "$outputfile1" testdata/v00/test_latex_page_with_table-1.png
+                    python3 imgextractors/cudanexus_ocr_surya_replicate.py --verbose -o "$outputfile2" testdata/v00/test_latex_page_with_table-2.png
                     cat "$outputfile1" "$outputfile2" > "$final_outputfile"
                     )
                 fi
