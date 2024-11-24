@@ -1,0 +1,114 @@
+#!/usr/bin/env python3
+
+TODO:
+Write this script with commend on the beginning
+describing that this is educational example and purpose what is trying to illutrate.
+So this is to illustrate how to process pdf file in python using external cli tools:
+image magick and poppeler pdftoppm 
+and python libraries IF AVAILABLE!
+
+We want roboust code that follows following requirements (and all of them to be written on a top comment of the file):
+
+* uses command line flags
+* -v|--verbose allows to turn extra logging about progress to standard error
+* expects pdf filename as parameter
+* may optionally take -f|--first and -l|--last page parameters, otherwise it will by default assume from first to last
+* code will be structured as routines will fallback mechanism to another library/tool if one not available
+* therefore API functions used by main function will be high level using specialized wrappers for different library/command line tool depending on availability
+
+Pseudocode
+
+#!/usr/bin/env python3
+
+# global variable about verbose output
+# the more -vvv times --verbose flag used the level more bumped
+verbose_level=1 # quiet/silent flag turns into '0' to make it quiet
+INFO=1
+VERBOSE=2
+VERBOSE2=3
+DEBUG=4
+def vprint(verbose_level, content...):
+    if verbose_flag >= verbose_level:
+        prefix="INFO" | "VERBOSE" | ... depending on level
+        print( prefix, content... , file=stderr )
+
+def get_no_of_pages_pdf_with_PyPDF2(pdf_filename):
+  vprint(DEBUG, f"get_no_pages_pdf_with_PyPDF2(pdf_filename)...")
+  try:
+    import PyPDF2
+    
+    with open('file.pdf', 'rb') as file:
+        reader = PyPDF2.PdfFileReader(file)
+        ret = reader.numPages
+  except ...:
+    handle properly case if library is not available
+
+
+def get_no_of_pages_pdf_with_pypdf(pdf_filename):
+  vprint(DEBUG, f"get_no_pages_pdf_with_pypdf(pdf_filename)...")
+  try:
+    from pypdf import PdfReader
+    
+    reader = PdfReader(pdf_path)
+    return len(reader.pages)
+    
+  except ...:
+    handle properly case if library is not available
+
+
+def get_no_of_pages_pdf_with_pdfinfo(pdf_filename):
+  vprint(DEBUG, f"get_no_pages_pdf_with_pdfinfo(pdf_filename)...")
+  try:
+    try to extract amount of pages using pdfinfo
+    if tool not avaialble of numer of pages can not be extracted
+    from output handle this gracefully in return
+    so user can handle
+  except ...:
+    ...
+
+
+def get_no_of_pages_pdf(pdf_filename):
+    vprint(DEBUG, f"get_no_pages_pdf(pdf_filename)...")
+    ...
+    keep tring different methods and if one fails handle it and try another,
+    structure code in clean way, sth like
+    no_of_pages = None
+    if no_of_pages is None:
+        try using get_no_of_pages_pdf_with_PyPDF2(pdf_filename)
+        ensure that is it does not work variable is still None
+    if no_of_pages is None:
+        try using get_no_of_pages_pdf_with_pypdf(pdf_filename)
+        ensure that is it does not work variable is still None
+    if no_of_pages is None:
+        try using get_no_of_pages_pdf_with_pdfinfo(pdf_filename)
+        ensure that is it does not work variable is still None
+    ...
+    vprint(VERBOSE, f"get_no_of_pages_pdf -> {no_of_pages}")
+    return no_of_pages
+
+In similar way implement `def pdf_page_as_png_image_with_...(pdf_filename, page_no, tmp_png)` for:
+* imagemagick - that will extract page using imagemagick or fail
+* pdftoppm
+Ensure that pdf_page_as_png_image(...) wrapper will have ability to handle
+potential failures,
+and keep style with verbosity, logging etc.
+
+def pdf_page_as_png_image(pdf_filename, page_no, tmp_png):
+    ...
+
+def filesize_of_each_page_image_export_as_pdf(pdf_filename):
+    no_of_pages = get_no_of_pages_pdf(pdf_filename)
+    if no_of_pages is not a number:
+        vprint(INFO, error - could not get number of pages for file {pdf_filename})
+        raise error
+    tmp_png = mktemp style made filename , ideally with .png extension
+    # TODO also ideally ensure somewhere in sourcecode that it will be cleaned up in case of interrupt
+    print( Size of png file for pages are... )
+    for page_no in range(1, no_of_pages+1):
+        pdf_page_as_png_image(pdf_filename, page_no, tmp_png)
+        print( {page_no}: {size in KB of tmp_png file}KB )
+
+def main(...):
+    ...
+    parameter parsing and showcasing how things work with filesize_of_each_page_image_export_as_pdf()
+    ...
