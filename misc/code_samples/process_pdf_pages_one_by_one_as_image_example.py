@@ -97,24 +97,22 @@ def get_no_of_pages_pdf(pdf_filename):
     vprint(VERBOSE, f"Page count: {no_of_pages}")
     return no_of_pages
 
-def pdf_page_as_png_image_with_imagemagick(pdf_filename, page_no, tmp_png):
+def pdf_page_as_png_image_with_imagemagick(pdf_filename, page_no, tmp_png, dpi=400):
     """Convert PDF page to PNG using ImageMagick."""
     vprint(DEBUG, f"Trying ImageMagick for page {page_no}")
     try:
-        subprocess.run(['magick', f'{pdf_filename}[{page_no-1}]', tmp_png],
-                      check=True)
+        subprocess.run(['magick', '-density', str(dpi), f'{pdf_filename}[{page_no-1}]', tmp_png], check=True)
         return True
     except subprocess.SubprocessError as e:
         vprint(DEBUG, f"ImageMagick failed: {str(e)}")
         return False
 
-def pdf_page_as_png_image_with_pdftoppm(pdf_filename, page_no, tmp_png):
+def pdf_page_as_png_image_with_pdftoppm(pdf_filename, page_no, tmp_png, dpi=400):
     """Convert PDF page to PNG using pdftoppm."""
     vprint(DEBUG, f"Trying pdftoppm for page {page_no}")
     try:
         temp_prefix = tmp_png.rsplit('.', 1)[0]
-        subprocess.run(['pdftoppm', '-f', str(page_no), '-l', str(page_no),
-                       '-png', pdf_filename, temp_prefix], check=True)
+        subprocess.run(['pdftoppm', '-r', str(dpi), '-f', str(page_no), '-l', str(page_no), '-png', pdf_filename, temp_prefix], check=True)
         # Rename output to match expected filename
         os.rename(f"{temp_prefix}-1.png", tmp_png)
         return True
@@ -122,17 +120,17 @@ def pdf_page_as_png_image_with_pdftoppm(pdf_filename, page_no, tmp_png):
         vprint(DEBUG, f"pdftoppm failed: {str(e)}")
         return False
 
-def pdf_page_as_png_image(pdf_filename, page_no, tmp_png):
+def pdf_page_as_png_image(pdf_filename, page_no, tmp_png, dpi=400):
     """Convert PDF page to PNG using available methods."""
     for method in [
         pdf_page_as_png_image_with_imagemagick,
         pdf_page_as_png_image_with_pdftoppm
     ]:
-        if method(pdf_filename, page_no, tmp_png):
+        if method(pdf_filename, page_no, tmp_png, dpi):
             return True
     return False
 
-def filesize_of_each_page_image_export_as_pdf(pdf_filename, first_page=None, last_page=None, output_dir=None):
+def filesize_of_each_page_image_export_as_pdf(pdf_filename, first_page=None, last_page=None, output_dir=None, dpi=400):
     """Process PDF file and print size of each page when converted to PNG."""
     no_of_pages = get_no_of_pages_pdf(pdf_filename)
     if not isinstance(no_of_pages, int):
@@ -147,7 +145,7 @@ def filesize_of_each_page_image_export_as_pdf(pdf_filename, first_page=None, las
     try:
         print(f"Size of PNG file for pages in {pdf_filename}:")
         for page_no in range(first_page, last_page + 1):
-            if pdf_page_as_png_image(pdf_filename, page_no, tmp_png):
+            if pdf_page_as_png_image(pdf_filename, page_no, tmp_png, dpi):
                 size_kb = os.path.getsize(tmp_png) / 1024
                 print(f"Page {page_no}: {size_kb:.1f}KB")
             else:
@@ -169,8 +167,8 @@ def main():
                         help='Increase verbosity level')
     parser.add_argument('-q', '--quiet', action='store_true',
                         help='Suppress all diagnostic output')
-    parser.add_argument('-O', '--output-dir', default=None,
-                        help='Output directory for intermediate files')
+    parser.add_argument('-O', '--output-dir', default=None, help='Output directory for intermediate files')
+    parser.add_argument('-d', '--dpi', type=int, default=400, help='Resolution in dpi')
 
     args = parser.parse_args()
 
@@ -182,8 +180,7 @@ def main():
         sys.exit(1)
 
     try:
-        filesize_of_each_page_image_export_as_pdf(
-            args.pdf_file, args.first, args.last, args.output_dir)
+        filesize_of_each_page_image_export_as_pdf(args.pdf_file, args.first, args.last, args.output_dir, args.dpi)
     except Exception as e:
         print(f"Error: {str(e)}", file=sys.stderr)
         sys.exit(1)
