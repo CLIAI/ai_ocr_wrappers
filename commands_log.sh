@@ -79,12 +79,21 @@ function human() { echo TO_HUMAN: "$@"; echo -e '\nAfter performing requested ac
 #
 # # Commands to be executed:
 
-# Implement imgextractor/cudanexus_ocr_surya_replicate.py initial implementation
-
+# # Implement imgextractor/cudanexus_ocr_surya_replicate.py initial implementation
+#
 # echo TODO > imgextractors/cudanexus_ocr_surya_replicate.py
 # aider --sonnet --edit-format whole  \
-# --file imgextractors/cudanexus_ocr_surya_replicate.py \
 # --msg 'Implement imgextractors/cudanexus_ocr_surya_replicate.py image2txt extractor based on provided documentation and examples' \
+# --file imgextractors/cudanexus_ocr_surya_replicate.py \
 # --read docs/replicate.com/replicate.com_cudanexus_ocr-surya_api_api-reference.md \
 # --read pdfextractors/cudanexus_nougat_replicate.py --read pdfextractors/cuuupid_marker_replicate.py
+
+# Add tests
+
+aider --4o --edit-format whole  \
+--msg 'Implement tests for imgextractors/cudanexus_ocr_surya_replicate.py image2txt extractor based on provided documentation, use files testdata/v00/test_latex_page_with_table-1.png and testdata/v00/test_latex_page_with_table-2.png OCR output of both of them should be concatenated and then tested against same test of word includion like pdf extractors' \
+--file tests/integration_on_production/run_scripts_against_replicate.sh \
+--file imgextractors/cudanexus_ocr_surya_replicate.py \
+--read docs/replicate.com/replicate.com_cudanexus_ocr-surya_api_api-reference.md \
+--read pdfextractors/cudanexus_nougat_replicate.py --read pdfextractors/cuuupid_marker_replicate.py
 
