@@ -36,6 +36,12 @@ def encode_file_to_base64(file_path):
     with open(file_path, "rb") as file:
         return base64.b64encode(file.read()).decode('utf-8')
 
+def truncate_long_string(data, max_length=1024):
+    """Truncate long strings for verbose output."""
+    if len(data) > max_length:
+        return f"{data[:64]} (...) {data[-64:]}"
+    return data
+
 def extract_text_from_image(input_file, output_file, verbose=False, force=False):
     """Extract text from image using Replicate's OCR-Surya API."""
     verbose_print(f"Extracting text from image: {input_file}", verbose)
@@ -49,20 +55,29 @@ def extract_text_from_image(input_file, output_file, verbose=False, force=False)
     try:
         # Encode the input file to base64
         encoded_file = encode_file_to_base64(input_file)
+        verbose_print(f"Encoded file to base64: {truncate_long_string(encoded_file)}", verbose)
 
         # Prepare the input for the API
         api_input = {
             "image": f"data:image/jpeg;base64,{encoded_file}",
             "action": "Run OCR"
         }
+        verbose_print(f"API input prepared: {truncate_long_string(str(api_input))}", verbose)
 
+        # Call the API
+        verbose_print("Calling Replicate API...", verbose)
         output = replicate.run(
             "cudanexus/ocr-surya:7ab5bedee2cd1f0c82b2df6718d19bf0b473f738f9db062f122e47e1467f96ce",
             input=api_input
         )
+        verbose_print(f"API output received: {truncate_long_string(str(output))}", verbose)
 
-        if isinstance(output, dict) and 'text' in output:
-            content = output['text']
+        if isinstance(output, dict) and 'text_file' in output:
+            # Download the text file from the FileOutput object
+            text_file_url = output['text_file'].url
+            response = requests.get(text_file_url)
+            response.raise_for_status()
+            content = response.text
             
             with open(final_output_file, "w", encoding="utf-8") as f:
                 f.write(content)
