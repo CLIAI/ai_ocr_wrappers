@@ -80,16 +80,18 @@ def get_no_of_pages_pdf_with_pdfinfo(pdf_filename):
         vprint(DEBUG, f"pdfinfo failed: {str(e)}")
         return None
 
+get_no_of_pages_pdf_ALL = [
+    get_no_of_pages_pdf_with_PyPDF2,
+    get_no_of_pages_pdf_with_pypdf,
+    get_no_of_pages_pdf_with_pdfinfo
+]
+
 def get_no_of_pages_pdf(pdf_filename):
     """Get number of pages using all available methods."""
     vprint(DEBUG, f"Getting page count for {pdf_filename}")
     
     no_of_pages = None
-    for method in [
-        get_no_of_pages_pdf_with_PyPDF2,
-        get_no_of_pages_pdf_with_pypdf,
-        get_no_of_pages_pdf_with_pdfinfo
-    ]:
+    for method in get_no_of_pages_pdf_ALL:
         no_of_pages = method(pdf_filename)
         if no_of_pages is not None:
             break
@@ -120,12 +122,14 @@ def pdf_page_as_png_image_with_pdftoppm(pdf_filename, page_no, tmp_png, dpi=400)
         vprint(DEBUG, f"pdftoppm failed: {str(e)}")
         return False
 
-def pdf_page_as_png_image(pdf_filename, page_no, tmp_png, dpi=400):
+pdf_page_as_png_image_ALL = [
+    pdf_page_as_png_image_with_imagemagick,
+    pdf_page_as_png_image_with_pdftoppm
+]
+
+def pdf_page_as_png_image(pdf_filename, page_no, tmp_png, dpi=400, page_extractors=pdf_page_as_png_image_ALL):
     """Convert PDF page to PNG using available methods."""
-    for method in [
-        pdf_page_as_png_image_with_imagemagick,
-        pdf_page_as_png_image_with_pdftoppm
-    ]:
+    for method in page_extractors:
         if method(pdf_filename, page_no, tmp_png, dpi):
             return True
     return False
