@@ -20,6 +20,7 @@ import argparse
 import os
 import subprocess
 import sys
+import shutil
 import tempfile
 from pathlib import Path
 
@@ -131,7 +132,7 @@ def pdf_page_as_png_image(pdf_filename, page_no, tmp_png):
             return True
     return False
 
-def filesize_of_each_page_image_export_as_pdf(pdf_filename, first_page=None, last_page=None):
+def filesize_of_each_page_image_export_as_pdf(pdf_filename, first_page=None, last_page=None, output_dir=None):
     """Process PDF file and print size of each page when converted to PNG."""
     no_of_pages = get_no_of_pages_pdf(pdf_filename)
     if not isinstance(no_of_pages, int):
@@ -151,6 +152,10 @@ def filesize_of_each_page_image_export_as_pdf(pdf_filename, first_page=None, las
                 print(f"Page {page_no}: {size_kb:.1f}KB")
             else:
                 print(f"Page {page_no}: conversion failed")
+            if output_dir:
+                output_file = os.path.join(output_dir, f"page-{page_no}.png")
+                shutil.copy(tmp_png, output_file)
+                vprint(INFO, f"Copied intermediate file to {output_file}")
     finally:
         if os.path.exists(tmp_png):
             os.unlink(tmp_png)
@@ -164,6 +169,8 @@ def main():
                         help='Increase verbosity level')
     parser.add_argument('-q', '--quiet', action='store_true',
                         help='Suppress all diagnostic output')
+    parser.add_argument('-O', '--output-dir', default=None,
+                        help='Output directory for intermediate files')
 
     args = parser.parse_args()
 
@@ -176,7 +183,7 @@ def main():
 
     try:
         filesize_of_each_page_image_export_as_pdf(
-            args.pdf_file, args.first, args.last)
+            args.pdf_file, args.first, args.last, args.output_dir)
     except Exception as e:
         print(f"Error: {str(e)}", file=sys.stderr)
         sys.exit(1)
