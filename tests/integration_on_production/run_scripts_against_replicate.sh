@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#TODO: make it so tests run in parallel
+
 # Function to display usage information
 display_usage() {
     echo "Usage: $0 [OPTIONS]"
