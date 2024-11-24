@@ -108,6 +108,7 @@ function assert_path() {
 assert_path testdata
 assert_path pdfextractors/cudanexus_nougat_replicate.py
 assert_path pdfextractors/cuuupid_marker_replicate.py
+assert_path imgextractors/cudanexus_ocr_surya_replicate.py
 
 # Functions to log information
 function INFO() {
@@ -197,5 +198,23 @@ pdfextractors/cuuupid_marker_replicate.py --verbose -o "$OUTPUTFILE" --lang Engl
 )
 fi
 check_testpdf000_ocr "$EXTRACTOR" "$OUTPUTFILE"
+
+# IMAGE2TXT TESTS #########################################
+EXTRACTOR='cudanexus_ocr_surya_replicate'
+OUTPUTFILE1="$tmpdir/${EXTRACTOR}_1.out"
+OUTPUTFILE2="$tmpdir/${EXTRACTOR}_2.out"
+FINAL_OUTPUTFILE="$tmpdir/${EXTRACTOR}_final.out"
+
+if [ -f "$FINAL_OUTPUTFILE" ]; then
+INFOEXTRACTOR SKIPPING "$EXTRACTOR:OUTPUTFILE_EXISTS:$FINAL_OUTPUTFILE"
+else
+INFOEXTRACTOR TESTING "$EXTRACTOR"
+(set -x
+imgextractors/cudanexus_ocr_surya_replicate.py --verbose -o "$OUTPUTFILE1" testdata/v00/test_latex_page_with_table-1.png
+imgextractors/cudanexus_ocr_surya_replicate.py --verbose -o "$OUTPUTFILE2" testdata/v00/test_latex_page_with_table-2.png
+cat "$OUTPUTFILE1" "$OUTPUTFILE2" > "$FINAL_OUTPUTFILE"
+)
+fi
+check_testpdf000_ocr "$EXTRACTOR" "$FINAL_OUTPUTFILE"
 
 fi
