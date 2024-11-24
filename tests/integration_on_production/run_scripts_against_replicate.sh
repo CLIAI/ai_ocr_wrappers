@@ -10,6 +10,7 @@ display_usage() {
     echo "  -c, --with-rest      Include tests against REST APIs (may incur costs)"
     echo "  --with-replicate, --with-openai Include tests against Replicate, OpenAI... API (may incur costs)"
     echo "  --with-ollama Include tests against Ollama Local API"
+    echo "  -t, --test, --test-only Specify only one extractor to be tested by its filename"
     echo "  -h, --help           Display this help message"
     echo
     echo "WARNING: Running tests against external APIs (Replicate, REST) may incur costs."
@@ -30,6 +31,7 @@ REPLICATE_TESTS=false
 OPENAI_TESTS=false
 OLLAMA_TESTS=false
 REST_TESTS=false
+SPECIFIC_TEST=""
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
@@ -53,6 +55,10 @@ while [[ $# -gt 0 ]]; do
         -c|--with-rest)
             REST_TESTS=true
             shift
+            ;;
+        -t|--test|--test-only)
+            SPECIFIC_TEST="$2"
+            shift 2
             ;;
         -h|--help)
             display_usage
@@ -165,7 +171,7 @@ check_are_words_contained "000:$extractor" "$ocrfile" Example Document John Doe 
 ## ##### Run the tests based on flags ##### ##
 
 # REPLICATE TESTS #########################################
-if $REPLICATE_TESTS || $REST_TESTS; then
+if $REPLICATE_TESTS || $REST_TESTS || [ -n "$SPECIFIC_TEST" ]; then
 
 INFO "# Running Replicate API tests..."
 
@@ -175,46 +181,56 @@ function INFOEXTRACTOR() {
     INFO "${status}:EXTRACTOR:$@"
 }
 
-EXTRACTOR='cudanexus_nougat_replicate'
-OUTPUTFILE="$tmpdir/$EXTRACTOR.out"
-if [ -f "$OUTPUTFILE" ]; then
-INFOEXTRACTOR SKIPPING "$EXTRACTOR:OUTPUTFILE_EXISTS:$OUTPUTFILE"
-else
-INFOEXTRACTOR TESTING "$EXTRACTOR"
-(set -x
-pdfextractors/cudanexus_nougat_replicate.py --verbose -o "$OUTPUTFILE" "$TESTPDF000"
-)
-fi
-check_testpdf000_ocr "$EXTRACTOR" "$OUTPUTFILE"
+run_extractor_test() {
+    local extractor="$1"
+    local outputfile="$tmpdir/$extractor.out"
+    if [ -f "$outputfile" ]; then
+        INFOEXTRACTOR SKIPPING "$extractor:OUTPUTFILE_EXISTS:$outputfile"
+    else
+        INFOEXTRACTOR TESTING "$extractor"
+        case "$extractor" in
+            cudanexus_nougat_replicate)
+                (set -x
+                pdfextractors/cudanexus_nougat_replicate.py --verbose -o "$outputfile" "$TESTPDF000"
+                )
+                ;;
+            cuuupid_marker_replicate)
+                (set -x
+                pdfextractors/cuuupid_marker_replicate.py --verbose -o "$outputfile" --lang English --dpi 400 --max-pages 1 --parallel-factor 4 "$TESTPDF000"
+                )
+                ;;
+            cudanexus_ocr_surya_replicate)
+                local outputfile1="$tmpdir/${extractor}_1.out"
+                local outputfile2="$tmpdir/${extractor}_2.out"
+                local final_outputfile="$tmpdir/${extractor}_final.out"
+                if [ -f "$final_outputfile" ]; then
+                    INFOEXTRACTOR SKIPPING "$extractor:OUTPUTFILE_EXISTS:$final_outputfile"
+                else
+                    INFOEXTRACTOR TESTING "$extractor"
+                    (set -x
+                    imgextractors/cudanexus_ocr_surya_replicate.py --verbose -o "$outputfile1" testdata/v00/test_latex_page_with_table-1.png
+                    imgextractors/cudanexus_ocr_surya_replicate.py --verbose -o "$outputfile2" testdata/v00/test_latex_page_with_table-2.png
+                    cat "$outputfile1" "$outputfile2" > "$final_outputfile"
+                    )
+                fi
+                check_testpdf000_ocr "$extractor" "$final_outputfile"
+                return
+                ;;
+            *)
+                ERROR "Unknown extractor: $extractor"
+                return
+                ;;
+        esac
+        check_testpdf000_ocr "$extractor" "$outputfile"
+    fi
+}
 
-EXTRACTOR='cuuupid_marker_replicate'
-OUTPUTFILE="$tmpdir/$EXTRACTOR.out"
-if [ -f "$OUTPUTFILE" ]; then
-INFOEXTRACTOR SKIPPING "$EXTRACTOR:OUTPUTFILE_EXISTS:$OUTPUTFILE"
+if [ -n "$SPECIFIC_TEST" ]; then
+    run_extractor_test "$SPECIFIC_TEST"
 else
-INFOEXTRACTOR TESTING "$EXTRACTOR"
-(set -x
-pdfextractors/cuuupid_marker_replicate.py --verbose -o "$OUTPUTFILE" --lang English --dpi 400 --max-pages 1 --parallel-factor 4 "$TESTPDF000"
-)
+    run_extractor_test "cudanexus_nougat_replicate"
+    run_extractor_test "cuuupid_marker_replicate"
+    run_extractor_test "cudanexus_ocr_surya_replicate"
 fi
-check_testpdf000_ocr "$EXTRACTOR" "$OUTPUTFILE"
-
-# IMAGE2TXT TESTS #########################################
-EXTRACTOR='cudanexus_ocr_surya_replicate'
-OUTPUTFILE1="$tmpdir/${EXTRACTOR}_1.out"
-OUTPUTFILE2="$tmpdir/${EXTRACTOR}_2.out"
-FINAL_OUTPUTFILE="$tmpdir/${EXTRACTOR}_final.out"
-
-if [ -f "$FINAL_OUTPUTFILE" ]; then
-INFOEXTRACTOR SKIPPING "$EXTRACTOR:OUTPUTFILE_EXISTS:$FINAL_OUTPUTFILE"
-else
-INFOEXTRACTOR TESTING "$EXTRACTOR"
-(set -x
-imgextractors/cudanexus_ocr_surya_replicate.py --verbose -o "$OUTPUTFILE1" testdata/v00/test_latex_page_with_table-1.png
-imgextractors/cudanexus_ocr_surya_replicate.py --verbose -o "$OUTPUTFILE2" testdata/v00/test_latex_page_with_table-2.png
-cat "$OUTPUTFILE1" "$OUTPUTFILE2" > "$FINAL_OUTPUTFILE"
-)
-fi
-check_testpdf000_ocr "$EXTRACTOR" "$FINAL_OUTPUTFILE"
 
 fi
