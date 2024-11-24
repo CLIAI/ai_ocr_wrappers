@@ -88,12 +88,12 @@ function human() { echo TO_HUMAN: "$@"; echo -e '\nAfter performing requested ac
 # --read docs/replicate.com/replicate.com_cudanexus_ocr-surya_api_api-reference.md \
 # --read pdfextractors/cudanexus_nougat_replicate.py --read pdfextractors/cuuupid_marker_replicate.py
 
-# Add tests
+# # Add --test-only|--test|-t extractor flag.
+# aider --4o --edit-format whole  \
+# --msg 'Implement test flag -t|--test|--test-only , that will allow specify only one extractor to be tested by its filename (cudanexus_nougat_replicate, cudanexus_ocr_surya_replicate, cuuupid_marker_replicate...) and ensure that once this flag is set other flags are adjusted appropriaterly and triggering if conditional instructions adjusted' \
+# --file tests/integration_on_production/run_scripts_against_replicate.sh
 
-aider --4o --edit-format whole  \
---msg 'Implement test flag -t|--test|--test-only , that will allow specify only one extractor to be tested by its filename (cudanexus_nougat_replicate, cudanexus_ocr_surya_replicate, cuuupid_marker_replicate...) and ensure that once this flag is set other flags are adjusted appropriaterly and triggering if conditional instructions adjusted' \
---file tests/integration_on_production/run_scripts_against_replicate.sh
-
+# # Add tests
 # aider --4o --edit-format whole  \
 # --msg 'Implement tests for imgextractors/cudanexus_ocr_surya_replicate.py image2txt extractor based on provided documentation, use files testdata/v00/test_latex_page_with_table-1.png and testdata/v00/test_latex_page_with_table-2.png OCR output of both of them should be concatenated and then tested against same test of word includion like pdf extractors' \
 # --file tests/integration_on_production/run_scripts_against_replicate.sh \
