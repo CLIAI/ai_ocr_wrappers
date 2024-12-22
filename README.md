@@ -71,11 +71,15 @@ Implemented extractors:
 
 To be implemented:
 
+* [ ] `markditdown` - MS tool for making data "LLM friendly" <https://github.com/microsoft/markitdown>
 * [ ] `pdfimages` - images extractor
 * [ ] `pdftotext` - basic text extraction
 * [ ] `pdftohtml` - HTML structure extraction
 * [ ] `abiruyt/text-extract-ocr` - text extraction from images
 * [ ] `vwtyler/ocr-pdf` - simple PDF to text using Tesseract
+* [ ] Anthropic Text and Visual PDF : <https://docs.anthropic.com/en/docs/build-with-claude/pdf-support>
+* [ ] `jina.ai/reader` - has PDF support <https://jina.ai/reader/>
+* [ ] Multimodal PDF Data Extraction by NVidia - <https://build.nvidia.com/nvidia/multimodal-pdf-data-extraction-for-enterprise-rag>
 
 ## Integration with imgextractors
 
