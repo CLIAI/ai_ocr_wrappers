@@ -1,4 +1,11 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run
+# /// script
+# dependencies = [
+#   "replicate>=0.25.0",
+#   "requests>=2.31.0",
+# ]
+# requires-python = ">=3.11"
+# ///
 
 import argparse
 import os

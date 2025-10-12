@@ -1,4 +1,11 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run
+# /// script
+# dependencies = [
+#   "PyPDF2>=3.0.0",
+#   "pypdf>=3.0.0",
+# ]
+# requires-python = ">=3.11"
+# ///
 
 """
 Educational example demonstrating PDF processing in Python.
