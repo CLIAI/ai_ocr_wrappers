@@ -2,8 +2,7 @@ Plese fix `pdfextractors/cuuupid_marker_replicate.py`.
 
 Error:
 ```
-$ cuuupid_marker_replicate.py ../testdata/v00/test_latex_page_with_table.pdf 
-[LOCAL_PATH_REMOVED]
+$ cuuupid_marker_replicate.py ../testdata/v00/test_latex_page_with_table.pdf
 Error: ReplicateError Details:
 title: Input validation failed
 status: 422
