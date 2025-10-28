@@ -218,6 +218,21 @@ run_extractor_test() {
                 check_testpdf000_ocr "$extractor" "$final_outputfile"
                 return
                 ;;
+            lucataco_deepseek_ocr_replicate)
+                (set -x
+                python3 imgextractors/lucataco_deepseek_ocr_replicate.py --verbose -o "$outputfile" --task-type "Convert to Markdown" --resolution Base testdata/v00/test_latex_page_with_table-1.png
+                )
+                ;;
+            deepseek_ocr_deepinfra)
+                # Check for DeepInfra token
+                if [ -z "$DEEPINFRA_API_TOKEN" ]; then
+                    ERROR "DEEPINFRA_API_TOKEN not set - skipping deepseek_ocr_deepinfra test"
+                    return
+                fi
+                (set -x
+                python3 imgextractors/deepseek_ocr_deepinfra.py --verbose -o "$outputfile" --task "Convert to Markdown" testdata/v00/test_latex_page_with_table-1.png
+                )
+                ;;
             *)
                 ERROR "Unknown extractor: $extractor"
                 return
@@ -233,6 +248,8 @@ else
     run_extractor_test "cudanexus_nougat_replicate"
     run_extractor_test "cuuupid_marker_replicate"
     run_extractor_test "cudanexus_ocr_surya_replicate"
+    run_extractor_test "lucataco_deepseek_ocr_replicate"
+    run_extractor_test "deepseek_ocr_deepinfra"
 fi
 
 fi

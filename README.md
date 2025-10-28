@@ -68,6 +68,9 @@ Implemented extractors:
     * `cuuupid/marker` via replicate.com
 * [x] cudanexus_ocr-surya - image OCR extractor
     * `cudanexus/ocr-surya` via replicate.com
+* [x] deepseek-ocr - Advanced OCR with 97% accuracy at 9-10× context compression
+    * `lucataco/deepseek-ocr` via replicate.com
+    * `deepseek-ai/DeepSeek-OCR` via deepinfra.com
 
 To be implemented:
 
